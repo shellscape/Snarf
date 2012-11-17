@@ -135,10 +135,6 @@ namespace Snarf.Udp {
 			uint four = value;
 			four >>= 24;
 
-			if (_position >= _data.Length) {
-				int i = 0;
-			}
-
 			_data[_position] = (byte)four;
 			_data[_position + 1] = (byte)three;
 			_data[_position + 2] = (byte)two;

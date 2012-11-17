@@ -54,10 +54,10 @@ namespace Snarf.Nfs {
 						result = _directory.SetAttr(xid, packet);
 						break;
 					case (int)NfsProcedure.LOOKUP:
-						result = _directory.Lookup(xid, packet);
+						result = _directory.Lookup(packet);
 						break;
 					case (int)NfsProcedure.READ:
-						result = _io.Read(xid, packet);
+						result = _io.Read(packet);
 						break;
 					case (int)NfsProcedure.WRITE:
 						result = _io.Write(xid, packet);
@@ -78,10 +78,10 @@ namespace Snarf.Nfs {
 						result = _directory.Rmdir(xid, packet);
 						break;
 					case (int)NfsProcedure.READDIR:
-						result = _directory.Readdir(xid, packet);
+						result = _directory.ReadDirectory(packet);
 						break;
 					case (int)NfsProcedure.STATFS:
-						result = _directory.StatFS(xid, packet);
+						result = _directory.StatFS(packet);
 						break;
 					default:
 						Console.Error.WriteLine("Unsupported NFS procedure called (" + packet.ProcedureID + ") from " + receivedFrom.ToString() + "\n");

@@ -11,12 +11,8 @@ namespace Snarf {
 		public static Boolean Is(this FileAttributes attributes, FileAttributes value) {
 			return ((attributes & value) == value);
 		}
-		
-		public static void BubbleSort(this string[] target) {
 
-		}
-
-		private static void BubbleSort<T>(IList<T> list) {
+		public static void BubbleSort<T>(this IList<T> list) {
 			BubbleSort<T>(list, Comparer<T>.Default);
 		}
 

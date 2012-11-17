@@ -7,7 +7,7 @@ namespace Snarf.Nfs.FileSystem {
 
 		internal NfsIO() { }
 
-		internal virtual NfsPacket Write(uint xid, NfsPacket packet) {
+		public NfsPacket Write(uint xid, NfsPacket packet) {
 			string fileName = null;
 
 			try {
@@ -55,67 +55,55 @@ namespace Snarf.Nfs.FileSystem {
 			}
 		}
 
-		//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-		//ORIGINAL LINE: NfsPacket Read(uint xid, NfsPacket packet, NfsPacketCache packetCache) throws NFSException
-		internal virtual NfsPacket Read(uint xid, NfsPacket packet) {
+		public NfsPacket Read(NfsPacket packet) {
 			try {
-				// collect data out of the packet
 				FileHandle fh = new FileHandle(packet);
 				uint offset = packet.GetUInt();
 				uint count = packet.GetUInt();
 				uint totalCount = packet.GetUInt(); // not used
+				uint xId = packet.XID;
+				int numberRead;
+				byte[] readbuf;
+				String filePath = HandleManager.GetName(fh.Handle);
 
-				// do the operation
-				string fileName = HandleManager.GetName(fh.Handle);
-				if (fileName == null) {
-					throw new NFSException(xid, (uint)NfsReply.ERR_STALE);
+				if (filePath == null) {
+					throw new NFSException(xId, (uint)NfsReply.ERR_STALE);
 				}
 
 				if (count <= 0) {
-					Console.Error.WriteLine("\tRead: invalid value for count " + count);
-					throw new NFSException(xid, (uint)NfsReply.ERR_IO);
+					Console.Error.WriteLine("\tNfsIO.Read: invalid value for count " + count);
+					throw new NFSException(xId, (uint)NfsReply.ERR_IO);
 				}
 
-				int numberRead;
-				byte[] readbuf;
-
-				using (StreamReader sr = new StreamReader(fileName)) {
+				using (StreamReader sr = new StreamReader(filePath)) {
 					sr.BaseStream.Seek(offset, SeekOrigin.Begin);
 					readbuf = new byte[(int)count];
 					numberRead = sr.BaseStream.Read(readbuf, 0, (int)count);
 				}
 
-				// Make sure something was read in */
 				if (numberRead < 0) {
-					Console.Error.WriteLine("\tRead error: number read is " + numberRead);
+					Console.Error.WriteLine("\tNfsIO.Read: number read is " + numberRead);
 					numberRead = 0;
 				}
 
-				// load in file attributes.
-				NfsFileAttributes fa = new NfsFileAttributes();
-				fa.Load(fileName);
-
-				// put together the reply packet, this will copy the read
-				//   data which is a little inefficient
+				NfsFileAttributes attributes = new NfsFileAttributes(filePath);
 				NfsPacket reply = new NfsPacket(128 + numberRead);
-				reply.AddReplyHeader(xid);
+
+				reply.AddReplyHeader(xId);
 				reply.SetUInt((uint)NfsReply.OK);
-				fa.Emit(ref reply);
+				
+				attributes.Emit(ref reply);
+
 				reply.SetData(numberRead, readbuf);
 
 				return reply;
-
 			}
 			catch (FileNotFoundException) {
-				throw new NFSException(xid, (uint)NfsReply.ERR_NOENT);
+				throw new NFSException(packet.XID, (uint)NfsReply.ERR_NOENT);
 			}
 			catch (IOException) {
-				throw new NFSException(xid, (uint)NfsReply.ERR_IO);
+				throw new NFSException(packet.XID, (uint)NfsReply.ERR_IO);
 			}
-		}
-
-		internal virtual NfsPacket getNfsPacket(int desiredSize) {
-			return new NfsPacket(desiredSize);
 		}
 	}
 

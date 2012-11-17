@@ -57,6 +57,10 @@ namespace Snarf.Nfs.FileSystem {
 
 		public NfsFileAttributes() { }
 
+		public NfsFileAttributes(String path) {
+			Load(path);
+		}
+
 		public bool Read(NfsPacket packet) {
 			type = (FileType)packet.GetUInt();
 			mode = (FilePermissions)packet.GetUInt();

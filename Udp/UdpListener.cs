@@ -84,7 +84,6 @@ namespace Snarf.Udp {
 			_started = true;
 
 			IPAddress address = (this.localMessagesOnly ? IPAddress.Loopback : IPAddress.Any);
-			//IPAddress address = Dns.GetHostAddresses(Dns.GetHostName()).Where(o => o.IsIPv6LinkLocal == false && o.IsIPv6Teredo == false).FirstOrDefault();
 			IPEndPoint endpoint = new IPEndPoint(address, this.port);
 			this.udp = new UdpClient(endpoint);
 			this.port = ((IPEndPoint)udp.Client.LocalEndPoint).Port; // if 0 is passed, the system will assign a port.

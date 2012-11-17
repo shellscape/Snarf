@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Snarf.Nfs.FileSystem {
 
@@ -8,8 +10,8 @@ namespace Snarf.Nfs.FileSystem {
 		private FileSystemInfo _fsInfo;
 		
 		// keep these between calls so subsequent calls getting the rest of the contents of a directory are fast.
-		private string _cachedDirectories;
-		private string[] _cachedFiles;
+		private String _cachedDirectories;
+		private List<String> _cachedFiles;
 
 		public NfsDirectory(FileSystemInfo fsInfo) {
 			_fsInfo = fsInfo;
@@ -79,15 +81,15 @@ namespace Snarf.Nfs.FileSystem {
 			}
 		}
 
-		public virtual NfsPacket Lookup(uint xid, NfsPacket packet) {
+		public virtual NfsPacket Lookup(NfsPacket packet) {
 			try {
 				FileHandle dir = new FileHandle(packet);
 				String entry = packet.GetString();
-				String dirName = GetNameFromHandle(dir.Handle, xid);
+				String dirName = GetNameFromHandle(dir.Handle, packet.XID);
 				String fileName = Path.Combine(dirName, entry);
 
 				if (File.Exists(fileName) != true) {
-					throw new NFSException(xid, (uint)NfsReply.ERR_NOENT);
+					throw new NFSException(packet.XID, (uint)NfsReply.ERR_NOENT);
 				}
 
 				NfsFileAttributes attributes = new NfsFileAttributes();
@@ -101,7 +103,7 @@ namespace Snarf.Nfs.FileSystem {
 
 				// make the reply
 				NfsPacket reply = new NfsPacket(128);
-				reply.AddReplyHeader(xid);
+				reply.AddReplyHeader(packet.XID);
 				reply.SetUInt((uint)NfsReply.OK);
 
 				handle.Emit(ref reply);
@@ -111,61 +113,62 @@ namespace Snarf.Nfs.FileSystem {
 
 			}
 			catch (FileNotFoundException) {
-				throw new NFSException(xid, (uint)NfsReply.ERR_NOENT);
+				throw new NFSException(packet.XID, (uint)NfsReply.ERR_NOENT);
 			}
 		}
 
-		public virtual NfsPacket Readdir(uint xid, NfsPacket packet) {
+		public virtual NfsPacket ReadDirectory(NfsPacket packet) {
 			
 			FileHandle fh = new FileHandle(packet);
 			uint cookie = packet.GetUInt();
 			uint count = packet.GetUInt();
+			uint xId = packet.XID;
 
-			// if this is a new call to readdir (cookie=0) or it is a new
-			//   directory to read, replace the cache.
-			string dirName = GetNameFromHandle(fh.Handle, xid);
-			Console.Write("Reading dir " + dirName + " cookie=" + cookie + " count=" + count + "\n");
+			// if this is a new call to readdir (cookie=0) or it is a new directory to read, replace the cache.
+			string dirName = GetNameFromHandle(fh.Handle, xId);
+			
+			//Console.Write("Reading dir " + dirName + " cookie=" + cookie + " count=" + count + "\n");
+
 			if (cookie == 0 || (dirName.Equals(_cachedDirectories) == false)) {
 
 				if (!Directory.Exists(dirName)) {
-					throw new NFSException(xid, (uint)NfsReply.ERR_NOENT);
+					throw new NFSException(xId, (uint)NfsReply.ERR_NOENT);
 				}
 
-				string[] dirfiles = Directory.GetFiles(dirName);
-				if (dirfiles == null) {
-					throw new NFSException(xid, (uint)NfsReply.ERR_NOENT);
-				}
-				Console.WriteLine("dir has " + dirfiles.Length + " entries");
-				if (dirfiles.Length <= 0) {
-					throw new NFSException(xid, (uint)NfsReply.ERR_NOENT);
+				List<String> dirFiles = Directory.GetFiles(dirName).ToList();
+				dirFiles.AddRange(Directory.GetDirectories(dirName));
+
+				if (dirFiles == null) {
+					throw new NFSException(xId, (uint)NfsReply.ERR_NOENT);
 				}
 
-				dirfiles.BubbleSort();
+				//Console.WriteLine("dir has " + dirFiles.Count + " entries");
 
-				// make a new list that contains the old list plus . and ..
-				string[] files = new string[dirfiles.Length + 2];
-				files[0] = ".";
-				files[1] = "..";
-				for (int i = 0; i < dirfiles.Length; i++) {
-					files[i + 2] = dirfiles[i];
+				if (dirFiles.Count <= 0) {
+					throw new NFSException(xId, (uint)NfsReply.ERR_NOENT);
 				}
 
-				_cachedFiles = files;
+				dirFiles.BubbleSort();
+				dirFiles.Insert(0, "..");
+				dirFiles.Insert(0, ".");
+				
+				_cachedFiles = dirFiles;
 				_cachedDirectories = dirName;
 			}
 
 			// prepare the reply packet.
 			NfsPacket reply = new NfsPacket((int)count);
-			reply.AddReplyHeader(xid);
+			reply.AddReplyHeader(xId);
 			reply.SetUInt((uint)NfsReply.OK);
 
-			// Add files to the list until there are no more files or all of
-			//   the count bytes have been used.
+			// Add files to the list until there are no more files or all of the count bytes have been used.
+			
 			int current = reply.Length;
 			bool more = false; // are there more files to get
+			
 			// if there are any files to add
-			if (_cachedFiles != null && _cachedFiles.Length > 0) {
-				for (int i = (int)cookie; i < _cachedFiles.Length; i++) {
+			if (_cachedFiles != null && _cachedFiles.Count > 0) {
+				for (int i = (int)cookie; i < _cachedFiles.Count; i++) {
 					// see if there is enough room for another file - 3 longs of id,
 					//   the name (rounded up to 4 bytes) and a trailing long 
 					//   indicating whether there are more files to get
@@ -336,10 +339,10 @@ namespace Snarf.Nfs.FileSystem {
 		public virtual NfsPacket StatFS(NfsPacket packet) {
 			FileHandle fh = new FileHandle(packet);
 			// tell the fsinfo the path to get information about
-			_fsInfo.SetFS(GetNameFromHandle(fh.Handle, xid));
+			_fsInfo.SetFS(GetNameFromHandle(fh.Handle, packet.XID));
 
 			NfsPacket reply = new NfsPacket(128);
-			reply.AddReplyHeader(xid);
+			reply.AddReplyHeader(packet.XID);
 			reply.SetUInt((uint)NfsReply.OK);
 			reply.SetUInt(_fsInfo.TransferSize);
 			reply.SetUInt(_fsInfo.BlockSize);
