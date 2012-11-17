@@ -6,12 +6,18 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Snarf.Nfs {
+
 	public static class HandleManager {
 
 		private static object _lock = new object();
-		private static List<String> _handles = new List<string>(){ null };
+		private static List<String> _handles = new List<string>() { null };
+		private static String _fileName = "handles";
 
-		public static uint GetHandle(String name){
+		public static void Init() {
+
+		}
+
+		public static uint GetHandle(String name) {
 			lock (_lock) {
 				if (_handles.Contains(name)) {
 					return (uint)_handles.IndexOf(name);
@@ -30,6 +36,10 @@ namespace Snarf.Nfs {
 				}
 				throw new Exception("HandleManager.GetName: handleId not found.");
 			}
+		}
+
+		private static void Save() {
+
 		}
 
 	}
