@@ -12,6 +12,7 @@ Snarf is based in part on the JNFS project by Steven Procter @ http://void.org/~
 - First commit/push. The server accepts version 2 connections and mounts. 
 - Mounts only list files and not directories. 
 - Mounts cannot persist between server restarts.
+- Exports are not hooked up. If the client specifies a path that is valid, it is allowed. This is temporary.
 
 **But, Why?**
 
