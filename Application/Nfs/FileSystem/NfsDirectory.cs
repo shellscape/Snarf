@@ -135,8 +135,8 @@ namespace Snarf.Nfs.FileSystem {
 					throw new NFSException(xId, (uint)NfsReply.ERR_NOENT);
 				}
 
-				List<String> dirFiles = Directory.GetFiles(dirName).ToList();
-				dirFiles.AddRange(Directory.GetDirectories(dirName));
+				List<String> dirFiles = Directory.GetFiles(dirName).Select(f => new FileInfo(f).Name).ToList();
+				dirFiles.AddRange(Directory.GetDirectories(dirName).Select(d => new DirectoryInfo(d).Name));
 
 				if (dirFiles == null) {
 					throw new NFSException(xId, (uint)NfsReply.ERR_NOENT);
