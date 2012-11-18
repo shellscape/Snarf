@@ -24,6 +24,14 @@ namespace Snarf.Nfs {
 		GarbageArguments = 4
 	}
 
+	public enum RpcAuthFlavor : int { 
+		NULL = 0,
+		UNIX = 1, 
+		SHORT = 2, 
+		DES = 3 
+	};
+
+
 	public enum NfsProcedure : int {
 		NULL = 0,
 		GETATTR = 1,
