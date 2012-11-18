@@ -11,9 +11,8 @@ namespace Snarf {
 	class Program {
 		static void Main(string[] args) {
 
-			//var udp = new UdpHandler(111);
-			//udp.PacketReceived += udp_PacketReceived;
-			//udp.Start();
+			MountManager.Init();
+			HandleManager.Init();
 
 			var nfs = new NfsHandler();
 			var mount = new MountHandler();
@@ -23,15 +22,6 @@ namespace Snarf {
 			mount.Start();
 			portmap.Start();
 
-		}
-
-		static void udp_PacketReceived(object sender, UdpPacketReceivedEventArgs e) {
-			Console.WriteLine("data received from: " + e.ReceivedFrom.ToString());
-			Console.WriteLine("data length: " + e.Packet.GetUInt().ToString());
-		}
-
-		static void udp_PacketReceived(byte[] bytes, string receivedFrom, bool isLocal, bool isLAN) {
-			
 		}
 	}
 }
