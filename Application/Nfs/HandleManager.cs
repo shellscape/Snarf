@@ -47,6 +47,7 @@ namespace Snarf.Nfs {
 		}
 
 		protected override void SetDefaults() {
+			_lock = new object();
 			this.FileName = "app.handles";
 #if DEBUG
 			this.AppDataPath = this.StorePath = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);

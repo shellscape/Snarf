@@ -145,7 +145,7 @@ namespace Snarf.Udp {
 				// bubble up the event
 				if (this.PacketReceived != null) this.PacketReceived(bytes, endpoint);
 			}
-			catch {
+			catch (Exception e) {
 				// swallow any exceptions (this handles the case when Growl is stopped while still listening for network notifications)
 			}
 		}
