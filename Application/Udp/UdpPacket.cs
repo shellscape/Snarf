@@ -175,7 +175,7 @@ namespace Snarf.Udp {
 			SetUInt((uint)len);
 			Array.Copy(data, 0, _data, _position, len);
 
-			Advance(len);
+			Advance((uint)len);
 			return 0;
 		}
 
@@ -186,9 +186,9 @@ namespace Snarf.Udp {
 		#endregion
 		
 		// Add the standard procedure you requested was called reply header
-		public virtual void Advance(long length) {
-			long words = (length + 3) / 4;
-			long delta = 4 * words;
+		public virtual void Advance(uint length) {
+			uint words = (length + 3) / 4;
+			uint delta = 4 * words;
 			_position += (int)delta;
 		}
 
