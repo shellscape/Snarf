@@ -176,7 +176,7 @@ namespace Snarf.Nfs.FileSystem {
 			rdev = 0;
 			blocks = (size + blocksize - 1) / blocksize;
 			fsid = isDirectory ? 0 : GetFileSystemId(file);
-			fileid = (uint)HandleManager.GetHandle(path);
+			fileid = (uint)HandleManager.Current.GetHandle(path);
 
 			lastAccessed = new NfsTime(file.LastAccessTime);
 			lastChanged = new NfsTime(file.LastWriteTime);

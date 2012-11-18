@@ -22,7 +22,7 @@ namespace Snarf.Nfs.FileSystem {
 				packet.Advance(datalen);
 
 				// carry out the write operation
-				fileName = HandleManager.GetName(fh.Handle);
+				fileName = HandleManager.Current.GetName(fh.Handle);
 				if (fileName == null) {
 					throw new NFSException(xid, (uint)NfsReply.ERR_STALE);
 				}
@@ -64,7 +64,7 @@ namespace Snarf.Nfs.FileSystem {
 				uint xId = packet.XID;
 				int numberRead;
 				byte[] readbuf;
-				String filePath = HandleManager.GetName(fh.Handle);
+				String filePath = HandleManager.Current.GetName(fh.Handle);
 
 				if (filePath == null) {
 					throw new NFSException(xId, (uint)NfsReply.ERR_STALE);

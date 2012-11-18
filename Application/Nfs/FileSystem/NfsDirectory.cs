@@ -96,7 +96,7 @@ namespace Snarf.Nfs.FileSystem {
 				attributes.Load(fileName);
 
 				// make a FileHandle for this new path
-				uint handleId = HandleManager.GetHandle(fileName);
+				uint handleId = HandleManager.Current.GetHandle(fileName);
 				
 				FileHandle handle = new FileHandle();
 				handle.Set(dir.Root, handleId, dir.ReadOnly);
@@ -179,7 +179,7 @@ namespace Snarf.Nfs.FileSystem {
 					}
 					// get the handle for this file
 					string fileName = Path.Combine(_cachedDirectories, _cachedFiles[i]);
-					uint handle = HandleManager.GetHandle(fileName);
+					uint handle = HandleManager.Current.GetHandle(fileName);
 
 					// add an entry to the packet for this file
 					reply.SetUInt(NfsHandler.NFS_TRUE);
@@ -220,7 +220,7 @@ namespace Snarf.Nfs.FileSystem {
 
 				// make a new handle for this file
 				FileHandle fh = new FileHandle();
-				long handle = HandleManager.GetHandle(path);
+				long handle = HandleManager.Current.GetHandle(path);
 				fh.Set(dirFH.Root, (uint)handle, dirFH.ReadOnly);
 
 				// get the attributes of this new file
@@ -288,7 +288,7 @@ namespace Snarf.Nfs.FileSystem {
 				dir.Create();
 
 				// make a FileHandle for this directory
-				long handle = HandleManager.GetHandle(newdir);
+				long handle = HandleManager.Current.GetHandle(newdir);
 				FileHandle newFH = new FileHandle();
 				newFH.Set(fileHandle.Root, (uint)handle, fileHandle.ReadOnly);
 
@@ -390,7 +390,7 @@ namespace Snarf.Nfs.FileSystem {
 
 		// local procedure to get the associated with a handle, throws an exception if there is a problem.
 		private string GetNameFromHandle(uint handle, uint xid) {
-			String result = HandleManager.GetName(handle);
+			String result = HandleManager.Current.GetName(handle);
 			if (result == null) {
 				throw new NFSException(xid, (int)NfsReply.ERR_STALE);
 			}
