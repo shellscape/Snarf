@@ -88,7 +88,7 @@ namespace Snarf.Nfs {
 			}
 			else {
 				// put together a file handle
-				uint handle = HandleManager.GetHandle(path);
+				uint handle = HandleManager.Current.GetHandle(path);
 				var fileHandle = new FileSystem.FileHandle();
 
 				fileHandle.Set(handle, (uint)handle, 0);
@@ -97,28 +97,31 @@ namespace Snarf.Nfs {
 
 				fileHandle.Emit(ref packet);
 			}
+
+			if (replyCode == NfsReply.OK) {
+				MountManager.Current.Add(sourcePacket.RemoteHost, path);
+			}
 			
 			Send(packet, receivedFrom);
 		}
 		
 		private void Unmount(NfsPacket sourcePacket, IPEndPoint receivedFrom) {
 
-			NfsPacket packet = new NfsPacket(128);
-
-			packet.AddReplyHeader(sourcePacket.XID);
-
 			// skip past the authentication records
 			sourcePacket.ReadAuthentication();
 			sourcePacket.ReadAuthentication();
 
 			String path = sourcePacket.GetString();
+			NfsPacket packet = new NfsPacket(128);
+
+			HandleManager.Current.GetHandle(path);
+			
+			packet.AddReplyHeader(sourcePacket.XID);
+			packet.SetUInt((uint)NfsReply.OK);
 
 			Console.WriteLine("MountHandler.Unmount : requested: " + path);
 
-			// put together a file handle
-			//	long handle = fileHandles.Allocate(path);
-
-			packet.SetUInt((uint)NfsReply.OK);
+			MountManager.Current.Remove(sourcePacket.RemoteHost);
 
 			Send(packet, receivedFrom);
 		}
