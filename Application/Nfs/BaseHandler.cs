@@ -57,6 +57,13 @@ namespace Snarf.Nfs {
 			uint version = packet.NfsVersion = packet.GetUInt();
 			uint procedure = packet.ProcedureID = packet.GetUInt();
 
+			IPHostEntry entry = Dns.GetHostEntry(packet.Source);
+			String[] parts = entry.HostName.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+
+			if (parts.Length >= 0) {
+				packet.RemoteHost = parts[0];
+			}
+
 			if (programId == this.ProgramID) {
 				Console.WriteLine("\nCall: rpcVersion = " + rpcVersion + " programId = " + programId + " version = " + version + " procedure = " + procedure);
 			}
