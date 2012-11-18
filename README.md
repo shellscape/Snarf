@@ -7,6 +7,12 @@ Snarf is based in part on the JNFS project by Steven Procter @ http://void.org/~
 
 **Current Status**
 
+11/18/2012
+
+- Mounts now list files and directories.
+- Mounts can't cd into subdirectories for some reason. Still looking into this one.
+- File handles and mounts are now cached in file.
+
 11/16/2012
 
 - First commit/push. The server accepts version 2 connections and mounts. 
