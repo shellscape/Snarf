@@ -69,8 +69,8 @@ namespace Snarf.Nfs.FileSystem {
 			return true;
 		}
 
-		internal virtual void Print() {
-			Console.WriteLine("FileHandle: root: " + root + ", handle: " + handle + ", readonly: " + @readonly);
-		}
+		//internal virtual void Print() {
+		//	Console.WriteLine("FileHandle: root: " + root + ", handle: " + handle + ", readonly: " + @readonly);
+		//}
 	}
 }

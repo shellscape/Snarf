@@ -30,8 +30,8 @@ namespace Snarf.Nfs {
 		}
 
 		protected override void Process(NfsPacket packet, IPEndPoint receivedFrom) {
-			Console.WriteLine("NfsHandler.Process : recievedFrom: " + receivedFrom.ToString());
-			Console.WriteLine("NfsHandler.Process: Procedure -> " + packet.ProcedureID + ":" + ((NfsProcedure)packet.ProcedureID).ToString());
+			//Console.WriteLine("NfsHandler.Process : recievedFrom: " + receivedFrom.ToString());
+			//Console.WriteLine("NfsHandler.Process: Procedure -> " + packet.ProcedureID + ":" + ((NfsProcedure)packet.ProcedureID).ToString());
 
 			// get rid of authentication recorde in packet, we don't use them
 			packet.ReadAuthentication();

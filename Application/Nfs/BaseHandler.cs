@@ -46,7 +46,7 @@ namespace Snarf.Nfs {
 			//RaisePacketReceived(e);
 
 			if (packet.ProgramID == this.ProgramID) {
-				Console.WriteLine("Found program: " + packet.ProgramID);
+				//Console.WriteLine("Found program: " + packet.ProgramID);
 				Process(packet, receivedFrom);
 			}
 		}
@@ -64,13 +64,13 @@ namespace Snarf.Nfs {
 				packet.RemoteHost = parts[0];
 			}
 
-			if (programId == this.ProgramID) {
-				Console.WriteLine("\nCall: rpcVersion = " + rpcVersion + " programId = " + programId + " version = " + version + " procedure = " + procedure);
-			}
+			//if (programId == this.ProgramID) {
+			//	Console.WriteLine("\nCall: rpcVersion = " + rpcVersion + " programId = " + programId + " version = " + version + " procedure = " + procedure);
+			//}
 		}
 
 		protected virtual void Reply(ref NfsPacket packet, uint xId) {
-			Console.WriteLine("Reply: I don't handle these");
+			//Console.WriteLine("Reply: I don't handle these");
 		}
 
 		protected void SendNull(NfsPacket sourcePacket, IPEndPoint receivedFrom) {

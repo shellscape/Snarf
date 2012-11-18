@@ -24,7 +24,7 @@ namespace Snarf.Nfs {
 			lock (_lock) {
 				if (_handles.Contains(name)) {
 					uint handle = (uint)_handles.IndexOf(name);
-					Console.WriteLine("HandleManager.GetHandle: name: " + name + ", handle: " + handle);
+					//Console.WriteLine("HandleManager.GetHandle: name: " + name + ", handle: " + handle);
 					return handle;
 				}
 				var handleId = _handles.Count;

@@ -27,8 +27,8 @@ namespace Snarf.Nfs {
 		}
 
 		protected override void Process(NfsPacket packet, IPEndPoint receivedFrom) {
-			Console.WriteLine("MountHandler.Process : recievedFrom: " + receivedFrom.ToString());
-			Console.WriteLine("MountHandler.Process: Procedure -> " + packet.ProcedureID + ":" + ((MountProcedure)packet.ProcedureID).ToString());
+			//Console.WriteLine("MountHandler.Process : recievedFrom: " + receivedFrom.ToString());
+			//Console.WriteLine("MountHandler.Process: Procedure -> " + packet.ProcedureID + ":" + ((MountProcedure)packet.ProcedureID).ToString());
 
 			switch (packet.ProcedureID) {
 				case (int)MountProcedure.NULL:
@@ -68,7 +68,7 @@ namespace Snarf.Nfs {
 
 				path = NfsPath.ToWin(path);
 
-				Console.WriteLine("MountHandler.Mount : requested: " + original + ", actual: " + path);
+				//Console.WriteLine("MountHandler.Mount : requested: " + original + ", actual: " + path);
 
 				//if (!Directory.Exists(path)) {
 				//	replyCode = NfsReply.ERR_EXIST;
@@ -121,7 +121,7 @@ namespace Snarf.Nfs {
 			packet.AddReplyHeader(sourcePacket.XID);
 			packet.SetUInt((uint)NfsReply.OK);
 
-			Console.WriteLine("MountHandler.Unmount : requested: " + path);
+			//Console.WriteLine("MountHandler.Unmount : requested: " + path);
 
 			MountManager.Current.Remove(sourcePacket.RemoteHost);
 

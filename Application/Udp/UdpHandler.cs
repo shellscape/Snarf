@@ -135,7 +135,7 @@ namespace Snarf.Udp {
 		}
 
 		public void Send(UdpPacket packet, IPEndPoint dest) {
-			Console.WriteLine("Sending Data: length: " + packet.Length + " -> " + dest.ToString());
+			//Console.WriteLine("Sending Data: length: " + packet.Length + " -> " + dest.ToString());
 
 			_listener.Client.Send(packet.Data, packet.Length, dest);
 		}

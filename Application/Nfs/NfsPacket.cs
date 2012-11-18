@@ -23,9 +23,9 @@ namespace Snarf.Nfs {
 		public String RemoteHost { get; set; }
 
 		// struct auth_unix - RFC 1057- page 12
-		private uint AuthStamp { get; set; }
-		public String AuthMachineName { get; set; }
-		public uint AuthClientID { get; set; }
+		//private uint AuthStamp { get; set; }
+		//public String AuthMachineName { get; set; }
+		//public uint AuthClientID { get; set; }
 		
 		public virtual void AddReplyHeader(uint xid) {
 			SetUInt(xid);
@@ -43,22 +43,22 @@ namespace Snarf.Nfs {
 		public virtual void ReadAuthentication() {
 			uint type = GetUInt();
 			uint length = GetUInt();
-			int startPos = this.Position; // know where we started before we got the info we need, so we can skip ahead.
+			//int startPos = this.Position; // know where we started before we got the info we need, so we can skip ahead.
 
-			if (type == (uint)RpcAuthFlavor.UNIX) {
-				AuthStamp = GetUInt();
-				AuthMachineName = GetString();
-				AuthClientID = GetUInt();
+			//if (type == (uint)RpcAuthFlavor.UNIX) {
+			//	AuthStamp = GetUInt();
+			//	AuthMachineName = GetString();
+			//	AuthClientID = GetUInt();
 
-				// skip the gids portion
-				int advance = (int)length - (this.Position - startPos);
-				if (advance > 0) {
-					Advance((uint)advance);
-				}		
-			}
-			else {
+			//	// skip the gids portion
+			//	int advance = (int)length - (this.Position - startPos);
+			//	if (advance > 0) {
+			//		Advance((uint)advance);
+			//	}		
+			//}
+			//else {
 				Advance(length);
-			}
+			//}
 
 			//struct auth_unix {
 			//	unsigned int stamp;

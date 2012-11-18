@@ -88,7 +88,9 @@ namespace Snarf.Nfs.FileSystem {
 				String dirName = GetNameFromHandle(dir.Handle, packet.XID);
 				String fileName = Path.Combine(dirName, entry);
 
-				if (File.Exists(fileName) != true) {
+				Console.WriteLine("Lookup -> " + entry);
+
+				if (!File.Exists(fileName) && !Directory.Exists(fileName)) {
 					throw new NFSException(packet.XID, (uint)NfsReply.ERR_NOENT);
 				}
 
@@ -149,8 +151,8 @@ namespace Snarf.Nfs.FileSystem {
 				}
 
 				dirFiles.BubbleSort();
-				dirFiles.Insert(0, "..");
-				dirFiles.Insert(0, ".");
+				//dirFiles.Insert(0, "..");
+				//dirFiles.Insert(0, ".");
 				
 				_cachedFiles = dirFiles;
 				_cachedDirectories = dirName;
@@ -181,7 +183,7 @@ namespace Snarf.Nfs.FileSystem {
 					string fileName = Path.Combine(_cachedDirectories, _cachedFiles[i]);
 					uint handle = HandleManager.Current.GetHandle(fileName);
 
-					Console.WriteLine("Got handle for: " + fileName + " -> " + handle);
+					Console.WriteLine("Read handle for: " + fileName + " -> " + handle);
 
 					// add an entry to the packet for this file
 					reply.SetUInt(NfsHandler.NFS_TRUE);

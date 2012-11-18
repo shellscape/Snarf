@@ -40,8 +40,8 @@ namespace Snarf.Nfs {
 		}
 
 		protected override void Process(NfsPacket packet, IPEndPoint receivedFrom) {
-			Console.WriteLine("PortmapHandler.Process : recievedFrom: " + receivedFrom.ToString());
-			Console.WriteLine("PortmapHandler.Process: Procedure -> " + packet.ProcedureID + ":" + ((PortmapProcedure)packet.ProcedureID).ToString());
+			//Console.WriteLine("PortmapHandler.Process : recievedFrom: " + receivedFrom.ToString());
+			//Console.WriteLine("PortmapHandler.Process: Procedure -> " + packet.ProcedureID + ":" + ((PortmapProcedure)packet.ProcedureID).ToString());
 
 			switch (packet.ProcedureID) {
 				case (int)PortmapProcedure.NULL:
