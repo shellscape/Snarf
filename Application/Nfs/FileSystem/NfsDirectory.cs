@@ -181,6 +181,8 @@ namespace Snarf.Nfs.FileSystem {
 					string fileName = Path.Combine(_cachedDirectories, _cachedFiles[i]);
 					uint handle = HandleManager.Current.GetHandle(fileName);
 
+					Console.WriteLine("Got handle for: " + fileName + " -> " + handle);
+
 					// add an entry to the packet for this file
 					reply.SetUInt(NfsHandler.NFS_TRUE);
 					reply.SetUInt(handle);
