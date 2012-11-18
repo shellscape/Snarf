@@ -114,6 +114,8 @@ namespace Snarf.Nfs {
 			String path = sourcePacket.GetString();
 			NfsPacket packet = new NfsPacket(128);
 
+			path = NfsPath.ToWin(path);
+
 			HandleManager.Current.GetHandle(path);
 			
 			packet.AddReplyHeader(sourcePacket.XID);
