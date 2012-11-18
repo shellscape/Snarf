@@ -11,7 +11,9 @@ Snarf is based in part on the JNFS project by Steven Procter @ http://void.org/~
 
 - Mounts now list files and directories.
 - Mounts can't cd into subdirectories for some reason. Still looking into this one.
-- File handles and mounts are now cached in file.
+- File handles and mounts are now cached in file, server can be restarted without creating mount problems.
+- Opening files on the client works. 
+- Saving on the client system doesn't work.
 
 11/16/2012
 
